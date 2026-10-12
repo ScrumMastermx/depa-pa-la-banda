@@ -12,7 +12,7 @@ Before anything else, read `${CLAUDE_PLUGIN_ROOT}/shared/ground-rules.md`
 Leave the user with a working folder in the current directory:
 `criteria.yaml`, `listings.json` (empty), `contacts.md`, `agenda.md`, and a
 short `CLAUDE.md` with exactly: "This is a Depa hunt folder. Use the /depa:* skills and
-follow the plugin's ground rules. Never send, submit, pay or sign anything for me." Then tell them what to do next.
+follow the plugin's ground rules. Never send, submit, pay or sign anything for me." Then tell them what to do next. (`/depa:tablero` later adds `board-url.txt` and a line about the shared board to that `CLAUDE.md`.)
 
 The user may not be technical. Ask one thing at a time, in plain words. Never
 show a wall of questions; group them in 3-4 short rounds.
@@ -103,6 +103,6 @@ notes: ""
 
 ## Step 3 — Close
 Show a 6-line summary of the criteria and ask "Anything wrong or missing?". Fix
-it. Then say the next step: `/depa:buscar` to find the first listings. Mention
+it. Then say the next step: `/depa:buscar` to find the first listings (and `/depa:tablero` for the board; if you can publish a claude.ai Artifact, offer the shared board that a partner can edit too). Mention
 once that connecting Claude in Chrome lets Depa browse portals the way they would
 (see the README) and that it is optional.

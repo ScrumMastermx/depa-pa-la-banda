@@ -53,15 +53,20 @@ sepas; "no sé" también vale.
 
 ## 5. Encuentra depas y lleva el control
 1. `/depa:buscar` encuentra anuncios nuevos y te dice cuáles parecen fraude.
-2. `/depa:tablero` crea `board.html`. Dale doble clic para abrir tu tablero en el navegador.
+2. `/depa:tablero` publica tu tablero como una página privada de claude.ai (o crea un `board.html` local si tu Claude Code no puede publicar páginas) y te da el enlace.
 3. `/depa:mensajes` redacta los mensajes a los agentes. **Tú los copias y los envías.**
 4. `/depa:agenda` planea tus visitas; `/depa:requisitos` explica lo que te van a pedir
    y qué revisar en persona; `/depa:seguimiento` te recuerda quién no ha contestado.
 
 ## Mover tarjetas en el tablero
-El tablero es una página web, así que no puede guardar en tu carpeta. Dile a Claude
-("mueve Blue Door a finalistas"), o da clic en **Exportar JSON**, guarda el archivo
-en tu carpeta y di "importa el tablero".
+**Tablero compartido (por defecto).** Arrastra una tarjeta a otra columna, usa su menú "Mover a..." o ábrela para
+editar las notas. Todo se guarda en una base de datos compartida; Claude ve lo mismo. Para sumar a tu pareja, abre el
+tablero en claude.ai, da clic en Compartir e invítala por correo como **Editor** (o Colaborador). Quien solo ve o
+comenta no puede editar. También puedes decirle a Claude ("mueve Blue Door a finalistas").
+
+**`board.html` local (alternativa).** En Chrome o Edge da clic en **Conectar carpeta**, elige tu carpeta de búsqueda
+y los cambios se escriben directo en `listings.json`. En otros navegadores los cambios se quedan en ese navegador; da
+clic en **Exportar JSON**, guarda el archivo en tu carpeta y di "importa el tablero".
 
 ## Opcional: conecta Chrome
 Instala la extensión [Claude in Chrome](https://claude.com/chrome) e inicia sesión.

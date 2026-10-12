@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Apartment-hunt kit for Claude Code: criteria, listing search, kanban board, messages, visit agenda, rental requirements. English + Spanish.",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "plugins": [
     {

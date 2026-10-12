@@ -73,26 +73,49 @@ PY'
 check "fixture phones are fake (55 0000 xxxx)" '! grep -hoE "\"contact_phone\": \"[^\"]*\"" "$FIX/listings-sample.json" | grep -qvE "55 0000 [0-9]{4}"'
 check "criteria fixture has required keys" 'for k in city budget bedrooms_min pets furnished neighborhoods move_in visit_trip guarantee_options; do grep -q "^$k:" "$FIX/criteria-sample.yaml" || exit 1; done'
 
-echo "== board template"
+echo "== board templates (local + artifact)"
 TMP="$(mktemp -d "${TMPDIR:-/tmp}/depa-smoke.XXXXXX")"
 python3 - "$REPO" "$TMP" <<'PY'
 import json,sys
 r,t=sys.argv[1:3]
-tpl=open(r+"/skills/tablero/assets/board-template.html",encoding="utf-8").read()
 data=json.load(open(r+"/tests/fixtures/listings-sample.json"))["listings"]
-out=tpl.replace("/*__DEPA_DATA__*/[]",json.dumps(data).replace("</","<\\/")).replace("__DEPA_LANG__","en")
-open(t+"/board.html","w",encoding="utf-8").write(out)
+cfg=json.dumps({"lang":"en","title":"Depa Sampleville","budgetMax":30000,"currency":"MXN","bedroomsMin":2})
+def fill(tpl):
+    return (tpl.replace("/*__DEPA_DATA__*/[]",json.dumps(data).replace("<","\\u003c"))
+               .replace("/*__DEPA_CONFIG__*/{}",cfg).replace("__DEPA_LANG__","en").replace("__DEPA_TITLE__","Depa Sampleville"))
+for src,dst in (("board-template.html","board.html"),("board-artifact.html","board-artifact.html")):
+    open(t+"/"+dst,"w",encoding="utf-8").write(fill(open(r+"/skills/tablero/assets/"+src,encoding="utf-8").read()))
 PY
-check "template has data marker"   'grep -q "__DEPA_DATA__" "$REPO/skills/tablero/assets/board-template.html"'
-check "rendered board has no leftover markers" '! grep -q "__DEPA_" "$TMP/board.html"'
-check "rendered board contains fixture listing" 'grep -q "Blue Door" "$TMP/board.html"'
-check "board uses no external scripts"  '! grep -qE "<script[^>]+src=" "$TMP/board.html"'
+check "local template has data + config markers"    'grep -q "__DEPA_DATA__" "$REPO/skills/tablero/assets/board-template.html" && grep -q "__DEPA_CONFIG__" "$REPO/skills/tablero/assets/board-template.html"'
+check "artifact template has config marker, no data"  'grep -q "__DEPA_CONFIG__" "$REPO/skills/tablero/assets/board-artifact.html" && ! grep -q "__DEPA_DATA__" "$REPO/skills/tablero/assets/board-artifact.html"'
+check "rendered boards have no leftover markers" '! grep -q "__DEPA_" "$TMP/board.html" "$TMP/board-artifact.html"'
+check "rendered local board contains fixture listing" 'grep -q "Blue Door" "$TMP/board.html"'
+check "boards use no external scripts"  '! grep -qE "<script[^>]+src=" "$TMP/board.html" "$TMP/board-artifact.html"'
+check "artifact page declares no html/head/body wrapper (tool adds it)" '! grep -qiE "<(!doctype|html[ >]|head[ >]|body[ >])" "$REPO/skills/tablero/assets/board-artifact.html"'
+check "artifact page starts with <title>" 'head -1 "$REPO/skills/tablero/assets/board-artifact.html" | grep -q "^<title>"'
+check "artifact page uses claude.use db + user, no window.claude.db" 'grep -q "claude.use(\"db\")" "$REPO/skills/tablero/assets/board-artifact.html" && grep -q "claude.use(\"user\")" "$REPO/skills/tablero/assets/board-artifact.html" && ! grep -q "window.claude.db" "$REPO/skills/tablero/assets/board-artifact.html"'
+check "artifact page has dark-mode tokens + explicit body background" 'grep -q "prefers-color-scheme: dark" "$REPO/skills/tablero/assets/board-artifact.html" && grep -q "body { margin: 0; background: var(--bg)" "$REPO/skills/tablero/assets/board-artifact.html"'
+check "artifact page needs no innerHTML (untrusted shared data)" '! grep -q "innerHTML" "$REPO/skills/tablero/assets/board-artifact.html"'
 if command -v node >/dev/null 2>&1; then
-  check "board script is valid JS" 'python3 -c "
+  for b in board board-artifact; do
+    check "$b script is valid JS" 'python3 -c "
 import re,sys
 h=open(sys.argv[1]).read()
-open(sys.argv[2],\"w\").write(re.search(r\"<script>(.*)</script>\",h,re.S).group(1))" "$TMP/board.html" "$TMP/board.js" && node --check "$TMP/board.js"'
-else echo "  SKIP board script syntax (node not installed)"; fi
+open(sys.argv[2],\"w\").write(re.search(r\"<script>(.*?)</script>\",h,re.S).group(1))" "$TMP/$b.html" "$TMP/$b.js" && node --check "$TMP/$b.js"'
+  done
+  check "board behavior tests (DOM shim, mocked localStorage / folder / window.claude db)" 'node "$REPO/tests/board-test.js" "$REPO" > "$TMP/board-test.out" 2>&1; cat "$TMP/board-test.out" | sed "s/^/    /"; ! grep -q FAIL "$TMP/board-test.out" && grep -q "checks passed" "$TMP/board-test.out"'
+else echo "  SKIP board script syntax and behavior tests (node not installed)"; fi
+check "schema doc lists every fixture listing field" 'python3 - "$REPO" <<PY
+import json,sys
+r=sys.argv[1]
+doc=open(r+"/shared/ground-rules.md").read()
+keys=set()
+for l in json.load(open(r+"/tests/fixtures/listings-sample.json"))["listings"]: keys|=set(l)
+miss=[k for k in sorted(keys) if "\""+k+"\"" not in doc]
+print("   missing:",miss) if miss else None
+sys.exit(1 if miss else 0)
+PY'
+check "SKILL tablero documents both modes" 'grep -q "board-artifact.html" "$REPO/skills/tablero/SKILL.md" && grep -q "ArtifactData" "$REPO/skills/tablero/SKILL.md" && grep -q "File System Access" "$REPO/skills/tablero/SKILL.md"'
 rm -rf "$TMP"
 
 echo

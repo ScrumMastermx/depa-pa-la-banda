@@ -53,15 +53,20 @@ what you know; "I don't know" is fine.
 
 ## 5. Find places and keep track
 1. `/depa:buscar` finds new listings and tells you which ones look like scams.
-2. `/depa:tablero` builds `board.html`. Double-click it to open your board in the browser.
+2. `/depa:tablero` publishes your board as a private claude.ai page (or builds a local `board.html` if your Claude Code can't publish pages) and gives you the link.
 3. `/depa:mensajes` writes the messages to agents. **You copy and send them yourself.**
 4. `/depa:agenda` plans your visits; `/depa:requisitos` explains what agents will ask
    and what to check in person; `/depa:seguimiento` reminds you who hasn't answered.
 
 ## Moving cards on the board
-The board is a web page, so it can't save to your folder. Either tell Claude
-("move Blue Door to finalist"), or click **Export JSON**, save the file in your folder
-and say "import the board".
+**Shared board (default).** Drag a card to another column, use its "Move to..." menu, or open it to edit
+notes. Everything saves to a shared database; Claude sees the same data. To add your partner, open the board on
+claude.ai, click Share and invite them by email as **Editor** (or Contributor). Viewers and Commenters can look but not
+edit. You can also just tell Claude ("move Blue Door to finalist").
+
+**Local `board.html` (fallback).** In Chrome or Edge click **Connect folder**, choose your hunt folder, and
+changes are written straight to `listings.json`. In other browsers changes stay in that browser; click **Export JSON**,
+save the file in your folder and say "import the board".
 
 ## Optional: connect Chrome
 Install the [Claude in Chrome](https://claude.com/chrome) extension and sign in.

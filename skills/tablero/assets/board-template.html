@@ -3,107 +3,600 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Depa pa la Banda</title>
+<title>__DEPA_TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap">
 <style>
-:root{--bg:#f6f4ef;--card:#fff;--ink:#222;--mute:#666;--line:#ddd;--accent:#2b6cb0;--warn:#b7791f}
-@media (prefers-color-scheme:dark){:root{--bg:#1c1c1e;--card:#2a2a2d;--ink:#eee;--mute:#aaa;--line:#444;--accent:#63b3ed;--warn:#ecc94b}}
-*{box-sizing:border-box}body{margin:0;font:14px/1.4 system-ui,sans-serif;background:var(--bg);color:var(--ink)}
-header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:2}
-h1{font-size:16px;margin:0 8px 0 0}input,select,button{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
-button{cursor:pointer}#q{min-width:200px;flex:1}
-main{display:flex;gap:10px;padding:12px 16px;overflow-x:auto;align-items:flex-start}
-.col{flex:0 0 260px;background:rgba(127,127,127,.08);border-radius:8px;padding:8px;min-height:120px}
-.col h2{font-size:13px;margin:0 0 8px;display:flex;justify-content:space-between}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;margin-bottom:8px;overflow:hidden}
-.card img{width:100%;height:120px;object-fit:cover;display:block;background:var(--line)}
-.card .b{padding:8px}.nick{font-weight:600}.mute{color:var(--mute);font-size:12px}
-.flag{color:var(--warn);font-size:12px}.price{font-weight:600}
-.card a{color:var(--accent)}.card select{width:100%;margin-top:6px;font-size:12px}
-.empty{color:var(--mute);font-size:12px;padding:4px}
+/* Layout: sticky toolbar, a one-line summary, then a horizontally scrolling board of stage columns; a side sheet edits one listing. */
+:root {
+  --bg: #f3f6f5;
+  --surface: #ffffff;
+  --ink: #17201e;
+  --muted: #5d6b67;
+  --line: #d9e2df;
+  --accent: #0f766e;
+  --accent-ink: #ffffff;
+  --accent-soft: #dff1ee;
+  --good: #17653f; --good-bg: #dff3e8;
+  --warn: #8a5a00; --warn-bg: #fbefd4;
+  --bad: #a8261f;  --bad-bg: #fbe3e1;
+  --unk: #5d6b67;  --unk-bg: #e9eeec;
+  --shadow: 0 1px 2px rgba(23,32,30,.06), 0 6px 18px rgba(23,32,30,.06);
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101716; --surface: #1a2321; --ink: #e6efed; --muted: #9bada8; --line: #2c3a37;
+    --accent: #5fd0c4; --accent-ink: #082623; --accent-soft: #1d3a36;
+    --good: #7fd6a6; --good-bg: #173326; --warn: #f0c46b; --warn-bg: #3a2d10;
+    --bad: #f3a19b; --bad-bg: #401c1a; --unk: #9bada8; --unk-bg: #25302d;
+    --shadow: 0 1px 2px rgba(0,0,0,.4); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101716; --surface: #1a2321; --ink: #e6efed; --muted: #9bada8; --line: #2c3a37;
+  --accent: #5fd0c4; --accent-ink: #082623; --accent-soft: #1d3a36;
+  --good: #7fd6a6; --good-bg: #173326; --warn: #f0c46b; --warn-bg: #3a2d10;
+  --bad: #f3a19b; --bad-bg: #401c1a; --unk: #9bada8; --unk-bg: #25302d;
+  --shadow: 0 1px 2px rgba(0,0,0,.4); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+[hidden] { display: none !important; }
+.wrap { padding-inline: 16px; padding-block: 20px 40px; max-width: 1600px; margin: 0 auto; display: grid; gap: 16px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header.top { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: end; justify-content: space-between; }
+.title { min-width: 0; }
+.title h1 { font-size: clamp(1.4rem, 1.1rem + 1.4vw, 2rem); font-weight: 700; letter-spacing: -.01em; }
+.title p { margin: 4px 0 0; color: var(--muted); }
+.title p b { color: var(--ink); font-weight: 600; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 14px; font-weight: 600; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.danger { color: var(--bad); }
+.btn:disabled { opacity: .6; cursor: default; }
+.toggle { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-weight: 500; padding: 8px 4px; }
+.toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
+.search, .sort { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.search { width: min(240px, 100%); }
+
+.summary { display: flex; flex-wrap: wrap; gap: 8px 22px; color: var(--muted); font-size: 13px; align-items: baseline; }
+.summary b { color: var(--ink); font-family: var(--display); font-size: 16px; font-variant-numeric: tabular-nums; }
+.mode { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--accent); }
+.notice { background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; }
+
+.board-scroll { overflow-x: auto; margin-inline: -16px; padding-inline: 16px; padding-bottom: 8px; }
+.board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(260px, 1fr); gap: 14px; min-width: min-content; }
+.col { display: grid; align-content: start; gap: 10px; min-width: 0; }
+.col-head { display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px; }
+.col-head h2 { font-size: 13px; font-family: var(--body); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.col-head span { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
+.col-empty { border: 1px dashed var(--line); border-radius: 12px; padding: 14px; color: var(--muted); font-size: 13px; }
+.col.drop { outline: 2px dashed var(--accent); outline-offset: 4px; border-radius: 12px; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 8px; width: 100%; box-shadow: var(--shadow); cursor: pointer; }
+.card:hover { border-color: var(--accent); }
+.card.discarded { opacity: .6; box-shadow: none; }
+.card.dragging { opacity: .5; }
+.thumb { margin: -12px -14px 2px; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 11px 11px 0 0; background: var(--unk-bg); }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-top { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+.card h3 { font-size: 16px; font-weight: 600; line-height: 1.25; min-width: 0; overflow-wrap: anywhere; }
+.sub { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.commute { flex: none; text-align: right; font-family: var(--display); line-height: 1; border-radius: 8px; padding: 6px 8px; }
+.commute b { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.commute small { display: block; font-family: var(--body); font-size: 11px; margin-top: 3px; }
+.t-good { background: var(--good-bg); color: var(--good); }
+.t-warn { background: var(--warn-bg); color: var(--warn); }
+.t-bad  { background: var(--bad-bg);  color: var(--bad); }
+.t-unk  { background: var(--unk-bg);  color: var(--unk); }
+.meta { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.price { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 9px; }
+.chip.area { background: var(--accent-soft); color: var(--accent); }
+.note-line { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-foot { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; justify-content: space-between; }
+.ad-link { font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; }
+.ad-link:hover { text-decoration: underline; }
+.move-select { font-size: 12px; font-weight: 600; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 3px 6px; max-width: 150px; }
+.quick-discard { border: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 600; padding: 2px 4px; border-radius: 6px; }
+.quick-discard:hover { color: var(--bad); background: var(--bad-bg); }
+
+.scrim { position: fixed; inset: 0; background: rgba(8,14,13,.5); z-index: 10; }
+.sheet { position: fixed; top: 0; right: 0; bottom: 0; width: min(520px, 100%); background: var(--bg); z-index: 11; overflow-y: auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 18px) 18px calc(env(safe-area-inset-bottom, 0px) + 24px); display: grid; gap: 16px; align-content: start; border-left: 1px solid var(--line); }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.sheet-head h2 { font-size: 22px; min-width: 0; overflow-wrap: anywhere; }
+.close { border: 0; background: transparent; font-size: 24px; line-height: 1; padding: 4px 8px; color: var(--muted); }
+.sheet-photo { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; display: block; }
+form.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.f { display: grid; gap: 4px; min-width: 0; }
+.f.full { grid-column: 1 / -1; }
+.f label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.f input, .f select, .f textarea { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; width: 100%; }
+.f textarea { min-height: 110px; resize: vertical; }
+.flags { background: var(--warn-bg); color: var(--warn); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.sheet-foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; }
+.sheet-foot .right { display: flex; gap: 8px; }
+.byline { font-size: 12px; color: var(--muted); }
+.err { color: var(--bad); font-size: 13px; }
+@media (max-width: 520px) { form.grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: no-preference) { .sheet { animation: slide .18s ease-out; } @keyframes slide { from { transform: translateX(24px); opacity: .6; } } }
 </style>
 </head>
 <body>
-<header>
-<h1>Depa pa la Banda</h1>
-<input id="q" type="search" placeholder="" autocomplete="off">
-<select id="sort"></select>
-<button id="exp"></button><button id="imp"></button>
-<input id="file" type="file" accept="application/json" hidden>
-<span class="mute" id="count"></span>
-</header>
-<main id="board"></main>
-<script>
-const DATA = /*__DEPA_DATA__*/[];
-const LANG = (document.documentElement.lang === "es") ? "es" : "en";
-const T = {
- en:{search:"Search (accent-insensitive)",newest:"Newest",price:"Price (low to high)",dist:"Distance (near to far)",exp:"Export JSON",imp:"Import JSON",move:"Move to...",open:"Open listing",none:"Nothing here",total:"total",commute:"approx.",bed:"bd",
-  stages:{suggested:"Suggested",to_review:"To review",contacted:"Contacted",visit_scheduled:"Visit scheduled",visited:"Visited",finalist:"Finalist",last_resort:"Worse is under a bridge (last resort)",discarded:"Discarded"}},
- es:{search:"Buscar (sin importar acentos)",newest:"Más nuevos",price:"Precio (menor a mayor)",dist:"Distancia (cerca a lejos)",exp:"Exportar JSON",imp:"Importar JSON",move:"Mover a...",open:"Abrir anuncio",none:"Nada aquí",total:"total",commute:"aprox.",bed:"rec",
-  stages:{suggested:"Sugeridos",to_review:"Por revisar",contacted:"Contactados",visit_scheduled:"Visita agendada",visited:"Visitados",finalist:"Finalistas",last_resort:"Peor es abajo de un puente",discarded:"Descartados"}}
-}[LANG];
-const STAGES = Object.keys(T.stages);
-let items = DATA.map(x => Object.assign({stage:"suggested"}, x));
-const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
-const num = v => (typeof v === "number" && isFinite(v)) ? v : (isFinite(parseFloat(v)) ? parseFloat(v) : null);
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const safeUrl = u => /^https?:\/\//i.test(u || "") ? u : "";
-const $ = id => document.getElementById(id);
-$("q").placeholder = T.search; $("exp").textContent = T.exp; $("imp").textContent = T.imp;
-$("sort").innerHTML = `<option value="new">${T.newest}</option><option value="price">${T.price}</option><option value="dist">${T.dist}</option>`;
+<div class="wrap">
+  <header class="top">
+    <div class="title">
+      <h1 id="boardTitle">Depa pa la Banda</h1>
+      <p id="criteriaLine"></p>
+    </div>
+    <div class="actions">
+      <input class="search" id="search" type="search" autocomplete="off">
+      <select class="sort" id="sort"></select>
+      <label class="toggle"><input type="checkbox" id="onlyFit"><span id="onlyFitLabel"></span></label>
+      <button class="btn" id="connectBtn" type="button" hidden></button>
+      <button class="btn" id="exportBtn" type="button"></button>
+      <button class="btn" id="importBtn" type="button"></button>
+      <input id="importFile" type="file" accept="application/json,.json" hidden>
+      <button class="btn primary" id="addBtn" type="button"></button>
+    </div>
+  </header>
 
-function cmp(a, b, key) {
-  if (key === "new") return String(b.posted_on && b.posted_on !== "?" ? b.posted_on : b.found_on || "").localeCompare(String(a.posted_on && a.posted_on !== "?" ? a.posted_on : a.found_on || ""));
-  const f = key === "price" ? (x => num(x.total) ?? num(x.price)) : (x => num(x.distance_km));
-  const va = f(a), vb = f(b);
-  if (va === null && vb === null) return 0; if (va === null) return 1; if (vb === null) return -1;
-  return va - vb;
+  <div class="summary" id="summary"></div>
+  <div class="notice" id="notice" hidden></div>
+
+  <div class="board-scroll"><div class="board" id="board"></div></div>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="sheet" id="sheet" hidden aria-modal="true" role="dialog" aria-labelledby="sheetTitle">
+  <div class="sheet-head">
+    <h2 id="sheetTitle"></h2>
+    <button class="close" id="closeBtn" type="button" aria-label="Close">&times;</button>
+  </div>
+  <img class="sheet-photo" id="sheetPhoto" alt="" hidden>
+  <div class="flags" id="flagsBox" hidden></div>
+  <form class="grid" id="form" autocomplete="off">
+    <div class="f full"><label for="f-nickname" id="l-nickname"></label><input id="f-nickname" required></div>
+    <div class="f"><label for="f-neighborhood" id="l-neighborhood"></label><input id="f-neighborhood"></div>
+    <div class="f"><label for="f-stage" id="l-stage"></label><select id="f-stage"></select></div>
+    <div class="f full"><label for="f-address" id="l-address"></label><input id="f-address"><a class="ad-link" id="mapLink" target="_blank" rel="noopener" hidden></a></div>
+    <div class="f full"><label for="f-url" id="l-url"></label><input id="f-url" type="url" placeholder="https://"><a class="ad-link" id="linkOpen" target="_blank" rel="noopener" hidden></a></div>
+    <div class="f"><label for="f-price" id="l-price"></label><input id="f-price" type="number" min="0" inputmode="numeric"></div>
+    <div class="f"><label for="f-maintenance" id="l-maintenance"></label><input id="f-maintenance" type="number" min="0" inputmode="numeric"></div>
+    <div class="f"><label for="f-bedrooms" id="l-bedrooms"></label><input id="f-bedrooms" type="number" min="0" inputmode="numeric"></div>
+    <div class="f"><label for="f-travel" id="l-travel"></label><input id="f-travel" type="number" min="0" inputmode="numeric"></div>
+    <div class="f full"><label for="f-notes" id="l-notes"></label><textarea id="f-notes"></textarea></div>
+    <div class="f full"><label for="f-addnote" id="l-addnote"></label><input id="f-addnote"></div>
+  </form>
+  <div class="err" id="err" hidden></div>
+  <div class="sheet-foot">
+    <span class="byline" id="byline"></span>
+    <div class="right">
+      <button class="btn" id="discardBtn" type="button" hidden></button>
+      <button class="btn primary" id="saveBtn" type="button"></button>
+    </div>
+  </div>
+</aside>
+
+<script>
+(() => {
+const CFG = Object.assign({ lang: "en", title: "Depa pa la Banda", referenceLabel: "", budgetMax: null, currency: "", bedroomsMin: null, maxCommute: null, collection: "depas" },
+  /*__DEPA_CONFIG__*/{});
+const LANG = CFG.lang === "es" ? "es" : "en";
+const T = {
+  en: {
+    search: "Search listings", newest: "Newest first", near: "Shortest commute", cheap: "Lowest price", onlyFit: "Only those that fit", add: "+ Add listing",
+    budget: "Budget up to", beds: "bedrooms or more", commute: "commute to", active: "active", fit: "fit your criteria", shortest: "min, shortest commute",
+    nothing: "Nothing here", emptyFirst: "No listings yet. Ask Claude to run /depa:buscar, or add one with the button above.",
+    move: "Move to...", discard: "Discard", restore: "Restore", open: "View listing", min: "min", bedShort: "bd", overBudget: "Over budget", total: "total",
+    newListing: "New listing", nickname: "Nickname", neighborhood: "Neighborhood", stage: "Stage", address: "Address", url: "Listing link", price: "Rent / month",
+    maintenance: "Maintenance / month", bedrooms: "Bedrooms", travel: "Commute (min)", notes: "Notes", addnote: "Add a dated note", save: "Save", flags: "Possible scam pattern: ",
+    openMap: "Open in maps", openListing: "Open listing", edited: "Edited", by: "by", you: "you", needName: "Give the listing a nickname to save it.",
+    saveFail: "Could not save. Try again.", noPerm: "You do not have permission to edit. Ask the owner to share the board as Contributor or Editor.",
+    moveFail: "Could not move the card. Try again.", readOnly: "You can view the board. To edit, ask the owner for Contributor or Editor access.",
+    needClaude: "Open this page from claude.ai to see and edit the shared list.", signIn: "Sign in to claude.ai to see the shared list.", lost: "Lost the connection to the list. Reload the page.",
+    modeShared: "Shared board", modeFolder: "Connected to your folder", modeLocal: "This browser only", connect: "Connect folder", reconnect: "Reconnect folder",
+    exportJson: "Export JSON", importJson: "Import JSON", badFile: "That file is not a valid Depa JSON export.", imported: "Imported", changes: "listings updated",
+    connectFail: "Could not connect the folder. Choose the folder that contains listings.json.", folderSaved: "Saved to listings.json", folderFail: "Could not write listings.json. Check the folder permission.",
+    localHint: "Changes are saved in this browser only. Use Export JSON and tell Claude, or connect your folder (Chrome or Edge).",
+    stages: { suggested: "Suggested", to_review: "To review", contacted: "Contacted", visit_scheduled: "Visit scheduled", visited: "Visited", finalist: "Finalist", last_resort: "Worse is under a bridge", discarded: "Discarded" }
+  },
+  es: {
+    search: "Buscar depa", newest: "Más recientes", near: "Traslado más corto", cheap: "Menor precio", onlyFit: "Solo los que cumplen", add: "+ Agregar depa",
+    budget: "Presupuesto hasta", beds: "recámaras o más", commute: "traslado a", active: "activos", fit: "cumplen tus criterios", shortest: "min el traslado más corto",
+    nothing: "Nada aquí", emptyFirst: "Aún no hay depas. Pide a Claude que corra /depa:buscar o agrega uno con el botón de arriba.",
+    move: "Mover a...", discard: "Descartar", restore: "Recuperar", open: "Ver anuncio", min: "min", bedShort: "rec", overBudget: "Arriba del presupuesto", total: "total",
+    newListing: "Nuevo depa", nickname: "Apodo", neighborhood: "Colonia", stage: "Etapa", address: "Dirección", url: "Link del anuncio", price: "Renta / mes",
+    maintenance: "Mantenimiento / mes", bedrooms: "Recámaras", travel: "Traslado (min)", notes: "Notas", addnote: "Agregar nota con fecha", save: "Guardar", flags: "Posible patrón de fraude: ",
+    openMap: "Abrir en mapas", openListing: "Abrir anuncio", edited: "Editado", by: "por", you: "ti", needName: "Ponle un apodo al depa para guardarlo.",
+    saveFail: "No se pudo guardar. Intenta de nuevo.", noPerm: "No tienes permiso para editar. Pide al dueño que comparta el tablero como Colaborador o Editor.",
+    moveFail: "No se pudo mover la tarjeta. Intenta de nuevo.", readOnly: "Puedes ver el tablero. Para editar, pide acceso de Colaborador o Editor.",
+    needClaude: "Abre esta página desde claude.ai para ver y editar la lista compartida.", signIn: "Inicia sesión en claude.ai para ver la lista compartida.", lost: "Se perdió la conexión con la lista. Recarga la página.",
+    modeShared: "Tablero compartido", modeFolder: "Conectado a tu carpeta", modeLocal: "Solo en este navegador", connect: "Conectar carpeta", reconnect: "Reconectar carpeta",
+    exportJson: "Exportar JSON", importJson: "Importar JSON", badFile: "Ese archivo no es una exportación JSON válida de Depa.", imported: "Importado", changes: "depas actualizados",
+    connectFail: "No se pudo conectar la carpeta. Elige la carpeta que contiene listings.json.", folderSaved: "Guardado en listings.json", folderFail: "No se pudo escribir listings.json. Revisa el permiso de la carpeta.",
+    localHint: "Los cambios se guardan solo en este navegador. Usa Exportar JSON y avísale a Claude, o conecta tu carpeta (Chrome o Edge).",
+    stages: { suggested: "Sugeridos", to_review: "Por revisar", contacted: "Contactados", visit_scheduled: "Visita agendada", visited: "Visitados", finalist: "Finalistas", last_resort: "Peor es abajo de un puente", discarded: "Descartados" }
+  }
+}[LANG];
+const STAGES = ["suggested", "to_review", "contacted", "visit_scheduled", "visited", "finalist", "last_resort", "discarded"];
+const $ = (id) => document.getElementById(id);
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+const norm = (v) => String(v ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const num = (v) => (typeof v === "number" && isFinite(v)) ? v : (v !== "" && v != null && isFinite(parseFloat(v)) ? parseFloat(v) : null);
+const safeUrl = (u) => /^https?:\/\//i.test(String(u || "")) ? String(u) : "";
+const isoDay = () => new Date().toISOString().slice(0, 10);
+const money = (n) => { try { return new Intl.NumberFormat(LANG === "es" ? "es-MX" : "en-US", { maximumFractionDigits: 0 }).format(n); } catch (e) { return String(n); } };
+const BUDGET = num(CFG.budgetMax), BEDS = num(CFG.bedroomsMin), MAXC = num(CFG.maxCommute);
+
+let items = [];            // listing documents: listings.json fields + id, stage, notes, createdAt, updatedAt
+let canWrite = true;
+let editingId = null;
+const platform = { update: null, create: null };   // set by the storage layer below
+
+function totalOf(d) { const t = num(d.total); if (t !== null) return t; const p = num(d.price); return p === null ? null : p + (num(d.maintenance) || 0); }
+function fits(d) {
+  const t = totalOf(d), b = num(d.bedrooms);
+  return !(BUDGET !== null && t !== null && t > BUDGET) && !(BEDS !== null && b !== null && b < BEDS);
 }
-function card(x) {
-  const flags = (x.scam_flags || []).map(f => `<div class="flag">⚠ ${esc(f)}</div>`).join("");
-  const url = safeUrl(x.url), photo = safeUrl(x.photo_url);
-  const money = `${esc(x.currency || "")} ${esc(x.price ?? "?")}` + (x.maintenance !== undefined ? ` + ${esc(x.maintenance)}` : "") +
-    (num(x.total) !== null ? ` = ${esc(x.total)} ${T.total}` : "");
-  const opts = STAGES.map(s => `<option value="${s}"${s === x.stage ? " selected" : ""}>${esc(T.stages[s])}</option>`).join("");
-  return `<div class="card" draggable="true" data-id="${esc(x.id)}">` +
-    (photo ? `<img src="${esc(photo)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : "") +
-    `<div class="b"><div class="nick">${esc(x.nickname || x.title || x.id)}</div>` +
-    `<div class="price">${money}</div>` +
-    `<div class="mute">${esc(x.neighborhood ?? "?")} · ${esc(x.bedrooms ?? "?")} ${T.bed} · ${T.commute} ${esc(x.travel_min ?? "?")} min</div>` +
-    flags + (x.notes ? `<div class="mute">${esc(x.notes)}</div>` : "") +
-    (url ? `<div><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${T.open}</a></div>` : "") +
-    `<select data-move="${esc(x.id)}" aria-label="${T.move}">${opts}</select></div></div>`;
+function tier(min) {
+  const m = num(min);
+  if (m === null) return "unk";
+  if (MAXC === null) return "unk";
+  return m <= MAXC / 2 ? "good" : m <= MAXC ? "warn" : "bad";
 }
+const stageOf = (d) => STAGES.includes(d.stage) ? d.stage : "to_review";
+const stamp = (d) => Date.parse(d.createdAt || (d.posted_on && d.posted_on !== "?" ? d.posted_on : "") || d.found_on || d.updatedAt || "") || 0;
+function matches(d, q) {
+  return [d.nickname, d.title, d.address, d.neighborhood, d.notes, d.agency, d.url, d.id, (d.scam_flags || []).join(" ")].some((v) => norm(v).includes(q));
+}
+function notice(msg) { $("notice").textContent = msg; $("notice").hidden = !msg; }
+function setItems(list) { items = list; render(); }
+function setWritable(w) { canWrite = w; $("addBtn").hidden = !w; if (!w) notice(T.readOnly); render(); }
+
+async function moveTo(id, stage) {
+  try { await platform.update(id, { stage }); }
+  catch (e) { notice(T.moveFail); render(); }
+}
+
 function render() {
-  const q = norm($("q").value), key = $("sort").value;
-  const shown = items.filter(x => !q || norm(Object.values(x).map(v => Array.isArray(v) ? v.join(" ") : v).join(" ")).includes(q)).sort((a, b) => cmp(a, b, key));
-  $("count").textContent = `${shown.length}/${items.length}`;
-  $("board").innerHTML = STAGES.map(s => {
-    const list = shown.filter(x => x.stage === s);
-    return `<section class="col" data-stage="${s}"><h2><span>${esc(T.stages[s])}</span><span>${list.length}</span></h2>` +
-      (list.map(card).join("") || `<div class="empty">${T.none}</div>`) + `</section>`;
-  }).join("");
+  const only = $("onlyFit").checked, q = norm($("search").value.trim()), key = $("sort").value;
+  const list = items.filter((d) => (!only || fits(d)) && (!q || matches(d, q)));
+  const sorter = key === "near" ? (a, b) => (num(a.travel_min) ?? 9999) - (num(b.travel_min) ?? 9999)
+    : key === "cheap" ? (a, b) => (totalOf(a) ?? 1e12) - (totalOf(b) ?? 1e12)
+    : (a, b) => stamp(b) - stamp(a);
+  const board = $("board");
+  board.replaceChildren();
+  for (const stage of STAGES) {
+    const col = el("section", "col");
+    col.dataset.stage = stage;
+    col.addEventListener("dragover", (e) => { if (canWrite) { e.preventDefault(); col.classList.add("drop"); } });
+    col.addEventListener("dragleave", () => col.classList.remove("drop"));
+    col.addEventListener("drop", (e) => {
+      e.preventDefault(); col.classList.remove("drop");
+      const id = e.dataTransfer.getData("text/plain"), d = items.find((x) => String(x.id) === id);
+      if (canWrite && d && stageOf(d) !== stage) moveTo(id, stage);
+    });
+    const mine = list.filter((d) => stageOf(d) === stage).sort(sorter);
+    const head = el("div", "col-head");
+    head.append(el("h2", null, T.stages[stage]), el("span", null, String(mine.length)));
+    col.append(head);
+    if (!mine.length) col.append(el("div", "col-empty", stage === "suggested" && !items.length ? T.emptyFirst : T.nothing));
+    for (const d of mine) col.append(card(d));
+    board.append(col);
+  }
+  renderSummary();
 }
-function move(id, stage) { const x = items.find(i => String(i.id) === String(id)); if (x && STAGES.includes(stage)) { x.stage = stage; render(); } }
-$("q").addEventListener("input", render); $("sort").addEventListener("change", render);
-$("board").addEventListener("change", e => { if (e.target.dataset.move) move(e.target.dataset.move, e.target.value); });
-$("board").addEventListener("dragstart", e => { const c = e.target.closest(".card"); if (c) e.dataTransfer.setData("text/plain", c.dataset.id); });
-$("board").addEventListener("dragover", e => e.preventDefault());
-$("board").addEventListener("drop", e => { e.preventDefault(); const col = e.target.closest(".col"); if (col) move(e.dataTransfer.getData("text/plain"), col.dataset.stage); });
-$("exp").addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify({listings: items}, null, 2)], {type: "application/json"});
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "board-export.json"; a.click(); URL.revokeObjectURL(a.href);
-});
-$("imp").addEventListener("click", () => $("file").click());
-$("file").addEventListener("change", async e => {
-  const f = e.target.files[0]; if (!f) return;
+
+function card(d) {
+  const stage = stageOf(d);
+  const b = el("div", "card" + (stage === "discarded" ? " discarded" : ""));
+  b.dataset.id = String(d.id);
+  b.tabIndex = 0; b.setAttribute("role", "button");
+  if (canWrite) {
+    b.draggable = true;
+    b.addEventListener("dragstart", (e) => { e.dataTransfer.setData("text/plain", String(d.id)); b.classList.add("dragging"); });
+    b.addEventListener("dragend", () => b.classList.remove("dragging"));
+  }
+  b.addEventListener("click", () => openSheet(String(d.id)));
+  b.addEventListener("keydown", (e) => { if (e.target === b && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openSheet(String(d.id)); } });
+  const photo = safeUrl(d.photo_url);
+  if (photo) { const t = el("div", "thumb"), im = el("img"); im.src = photo; im.alt = ""; im.loading = "lazy"; im.referrerPolicy = "no-referrer"; t.append(im); b.append(t); }
+  const top = el("div", "card-top"), titles = el("div"); titles.style.minWidth = "0";
+  titles.append(el("h3", null, d.nickname || d.title || String(d.id)));
+  if (d.title && d.nickname && d.title !== "?") titles.append(el("div", "sub", d.title));
+  top.append(titles);
+  const mins = num(d.travel_min), c = el("div", "commute t-" + tier(mins));
+  c.append(el("b", null, mins === null ? "-" : String(mins)), el("small", null, T.min));
+  top.append(c);
+  b.append(top);
+  const total = totalOf(d), meta = el("div", "meta");
+  if (total !== null) meta.append(el("span", "price", (d.currency && d.currency !== "?" ? d.currency + " " : "") + money(total) + " " + T.total));
+  if (d.address && d.address !== "?") meta.append(document.createTextNode((total !== null ? " · " : "") + d.address));
+  if (meta.childNodes.length) b.append(meta);
+  const chips = el("div", "chips");
+  if (d.neighborhood && d.neighborhood !== "?") chips.append(el("span", "chip area", d.neighborhood));
+  const beds = num(d.bedrooms);
+  chips.append(el("span", "chip t-" + (beds === null ? "unk" : BEDS !== null && beds < BEDS ? "bad" : "good"), (beds === null ? "?" : beds) + " " + T.bedShort));
+  if (BUDGET !== null && total !== null && total > BUDGET) chips.append(el("span", "chip t-bad", T.overBudget));
+  if ((d.scam_flags || []).length) chips.append(el("span", "chip t-warn", "⚠ " + d.scam_flags.length));
+  b.append(chips);
+  if (d.notes) { const lines = String(d.notes).trim().split("\n"); b.append(el("div", "note-line", lines[lines.length - 1])); }
+  const foot = el("div", "card-foot"), url = safeUrl(d.url);
+  if (url) {
+    const a = el("a", "ad-link", T.open + " ↗"); a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+    a.addEventListener("click", (e) => e.stopPropagation());
+    foot.append(a);
+  }
+  if (canWrite) {
+    const mv = el("select", "move-select");
+    mv.setAttribute("aria-label", T.move);
+    const o0 = el("option", null, T.move); o0.value = ""; mv.append(o0);
+    for (const s of STAGES) if (s !== stage) { const o = el("option", null, T.stages[s]); o.value = s; mv.append(o); }
+    mv.addEventListener("click", (e) => e.stopPropagation());
+    mv.addEventListener("keydown", (e) => e.stopPropagation());
+    mv.addEventListener("change", (e) => { e.stopPropagation(); if (mv.value) { mv.disabled = true; moveTo(String(d.id), mv.value); } });
+    foot.append(mv);
+    const disc = stage === "discarded", q = el("button", "quick-discard", (disc ? "↺ " + T.restore : "✕ " + T.discard));
+    q.type = "button";
+    q.addEventListener("click", (e) => { e.stopPropagation(); q.disabled = true; moveTo(String(d.id), disc ? "to_review" : "discarded"); });
+    foot.append(q);
+  }
+  if (foot.childNodes.length) b.append(foot);
+  return b;
+}
+
+function renderSummary() {
+  const s = $("summary"); s.replaceChildren();
+  const act = items.filter((d) => !["discarded", "suggested"].includes(stageOf(d)));
+  const best = act.filter((d) => num(d.travel_min) !== null).sort((a, b) => num(a.travel_min) - num(b.travel_min))[0];
+  const add = (label, val) => { const x = el("span"); x.append(el("b", null, val), document.createTextNode(" " + label)); s.append(x); };
+  add(T.active, String(act.length));
+  add(T.fit, String(act.filter(fits).length));
+  if (best) add(T.shortest + " (" + (best.nickname || best.id) + ")", String(num(best.travel_min)));
+  const m = el("span", "mode"); m.id = "modeLabel"; m.textContent = modeLabel; s.append(m);
+}
+let modeLabel = "";
+function setMode(label) { modeLabel = label; const m = $("modeLabel"); if (m) m.textContent = label; renderSummary(); }
+
+// ---- sheet ----
+function numField(v) { return num(v) === null ? "" : String(num(v)); }
+function openSheet(id) {
+  editingId = id || null;
+  const d = id ? items.find((x) => String(x.id) === id) : null;
+  $("sheetTitle").textContent = d ? (d.nickname || String(d.id)) : T.newListing;
+  const photo = d ? safeUrl(d.photo_url) : "";
+  $("sheetPhoto").hidden = !photo; if (photo) $("sheetPhoto").src = photo;
+  const flags = d && d.scam_flags && d.scam_flags.length ? T.flags + d.scam_flags.join("; ") : "";
+  $("flagsBox").hidden = !flags; $("flagsBox").textContent = flags;
+  const v = d || {};
+  $("f-nickname").value = v.nickname || ""; $("f-neighborhood").value = v.neighborhood && v.neighborhood !== "?" ? v.neighborhood : "";
+  $("f-address").value = v.address && v.address !== "?" ? v.address : ""; $("f-url").value = safeUrl(v.url);
+  $("f-price").value = numField(v.price); $("f-maintenance").value = numField(v.maintenance);
+  $("f-bedrooms").value = numField(v.bedrooms); $("f-travel").value = numField(v.travel_min);
+  $("f-notes").value = v.notes || ""; $("f-addnote").value = "";
+  $("f-stage").value = d ? stageOf(d) : "to_review";
+  updateLinks();
+  $("discardBtn").hidden = !d || !canWrite;
+  $("discardBtn").textContent = d && stageOf(d) === "discarded" ? T.restore : T.discard;
+  $("saveBtn").hidden = !canWrite;
+  $("err").hidden = true;
+  $("byline").textContent = d && d.updatedAt ? T.edited + " " + String(d.updatedAt).slice(0, 16).replace("T", " ") + (d.updatedBy === "claude" ? " " + T.by + " Claude" : "") : "";
+  $("scrim").hidden = false; $("sheet").hidden = false;
+  setTimeout(() => $("f-nickname").focus(), 30);
+}
+function closeSheet() { $("scrim").hidden = true; $("sheet").hidden = true; editingId = null; }
+function updateLinks() {
+  const u = $("f-url").value.trim(), a = $("f-address").value.trim();
+  $("linkOpen").hidden = !safeUrl(u); if (safeUrl(u)) { $("linkOpen").href = u; $("linkOpen").textContent = T.openListing + " ↗"; }
+  $("mapLink").hidden = !a; if (a) { $("mapLink").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(a + (CFG.city ? ", " + CFG.city : "")); $("mapLink").textContent = T.openMap + " ↗"; }
+}
+function showErr(m) { $("err").textContent = m; $("err").hidden = false; }
+const permMsg = (e) => (e && e.code === "invalid_argument") ? T.noPerm : T.saveFail;
+
+async function saveSheet() {
+  const nickname = $("f-nickname").value.trim();
+  if (!nickname) return showErr(T.needName);
+  const n = (id) => { const v = $(id).value.trim(); return v === "" ? "?" : Number(v); };
+  const price = n("f-price"), maint = n("f-maintenance");
+  let notes = $("f-notes").value.trim();
+  const extra = $("f-addnote").value.trim();
+  if (extra) notes = (notes ? notes + "\n" : "") + isoDay() + ": " + extra;
+  const fields = {
+    nickname, neighborhood: $("f-neighborhood").value.trim() || "?", address: $("f-address").value.trim() || "?", url: $("f-url").value.trim() || "?",
+    price, maintenance: maint, total: typeof price === "number" ? price + (typeof maint === "number" ? maint : 0) : "?",
+    bedrooms: n("f-bedrooms"), travel_min: n("f-travel"), stage: $("f-stage").value, notes
+  };
+  if (typeof price === "number" && typeof maint !== "number") fields.total = "?";
+  $("saveBtn").disabled = true;
   try {
-    const d = JSON.parse(await f.text()), list = Array.isArray(d) ? d : d.listings;
-    list.forEach(n => { const x = items.find(i => String(i.id) === String(n.id)); if (x && STAGES.includes(n.stage)) { x.stage = n.stage; if (n.notes !== undefined) x.notes = n.notes; } });
+    if (editingId) await platform.update(editingId, fields);
+    else {
+      const id = "m" + Date.now().toString(36);
+      await platform.create(Object.assign({
+        id, title: nickname, source: "manual", currency: CFG.currency || "?", bathrooms: "?", parking: "?", pets: "?", furnished: "?", photo_url: "?",
+        agency: "?", contact_name: "?", contact_phone: "?", distance_km: "?", scam_flags: [], found_on: isoDay(), posted_on: "?", lat: null, lng: null
+      }, fields));
+    }
+    closeSheet();
+  } catch (e) { showErr(permMsg(e)); }
+  finally { $("saveBtn").disabled = false; }
+}
+
+function initUi() {
+  $("boardTitle").textContent = CFG.title;
+  const bits = [];
+  if (BUDGET !== null) bits.push(T.budget + " " + (CFG.currency ? CFG.currency + " " : "") + money(BUDGET));
+  if (BEDS !== null) bits.push(BEDS + "+ " + T.beds);
+  if (CFG.referenceLabel) bits.push(T.commute + " " + CFG.referenceLabel);
+  $("criteriaLine").textContent = bits.join(" · ");
+  $("search").placeholder = T.search; $("search").setAttribute("aria-label", T.search);
+  for (const [v, l] of [["new", T.newest], ["near", T.near], ["cheap", T.cheap]]) { const o = el("option", null, l); o.value = v; $("sort").append(o); }
+  $("sort").value = "new";
+  $("onlyFitLabel").textContent = T.onlyFit; $("addBtn").textContent = T.add;
+  for (const [k, id] of [["nickname", "nickname"], ["neighborhood", "neighborhood"], ["stage", "stage"], ["address", "address"], ["url", "url"], ["price", "price"], ["maintenance", "maintenance"], ["bedrooms", "bedrooms"], ["travel", "travel"], ["notes", "notes"], ["addnote", "addnote"]]) $("l-" + id).textContent = T[k];
+  for (const s of STAGES) { const o = el("option", null, T.stages[s]); o.value = s; $("f-stage").append(o); }
+  $("saveBtn").textContent = T.save;
+  try { $("onlyFit").checked = localStorage.getItem("depa-onlyFit") === "1"; const sv = localStorage.getItem("depa-sort"); if (["new", "near", "cheap"].includes(sv)) $("sort").value = sv; } catch (e) {}
+  $("search").addEventListener("input", render);
+  $("sort").addEventListener("change", () => { try { localStorage.setItem("depa-sort", $("sort").value); } catch (e) {} render(); });
+  $("onlyFit").addEventListener("change", () => { try { localStorage.setItem("depa-onlyFit", $("onlyFit").checked ? "1" : "0"); } catch (e) {} render(); });
+  $("addBtn").addEventListener("click", () => openSheet(null));
+  $("closeBtn").addEventListener("click", closeSheet); $("scrim").addEventListener("click", closeSheet);
+  $("saveBtn").addEventListener("click", saveSheet);
+  $("f-url").addEventListener("input", updateLinks); $("f-address").addEventListener("input", updateLinks);
+  $("discardBtn").addEventListener("click", async () => {
+    const d = items.find((x) => String(x.id) === editingId); if (!d) return;
+    try { await platform.update(editingId, { stage: stageOf(d) === "discarded" ? "to_review" : "discarded" }); closeSheet(); } catch (e) { showErr(permMsg(e)); }
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("sheet").hidden) closeSheet(); });
+  render();
+}
+
+// ---- storage: local file mode ----
+// 1) Chrome/Edge: "Connect folder" reads and writes listings.json directly (File System Access API).
+// 2) Anywhere else: changes live in localStorage; Export/Import JSON hands them to Claude.
+(() => {
+  const DATA = /*__DEPA_DATA__*/[];
+  const STOREKEY = "depa-board-state";
+  let fileHandle = null;            // handle to listings.json when connected
+  let state = { over: {}, added: [] };
+
+  const readState = () => { try { const s = JSON.parse(localStorage.getItem(STOREKEY) || "null"); if (s && s.over && s.added) state = s; } catch (e) {} };
+  const writeState = () => { try { localStorage.setItem(STOREKEY, JSON.stringify(state)); } catch (e) {} };
+  const withDefaults = (x) => Object.assign({ stage: "suggested", notes: "" }, x, { id: String(x.id) });
+
+  function fromData() {
+    const built = CFG.built || "";
+    const list = DATA.map(withDefaults);
+    for (const a of state.added) if (!list.some((x) => x.id === a.id)) list.push(withDefaults(a));
+    for (const x of list) { const o = state.over[x.id]; if (o && (!built || String(o.updatedAt || "") > built)) Object.assign(x, o); }
+    return list;
+  }
+
+  // ---- folder (File System Access API) ----
+  async function readFile() {
+    const f = await fileHandle.getFile(), d = JSON.parse(await f.text());
+    return { doc: Array.isArray(d) ? { listings: d } : d, list: Array.isArray(d) ? d : (d.listings || []) };
+  }
+  async function writeFile(doc) {
+    const w = await fileHandle.createWritable();
+    await w.write(JSON.stringify(doc, null, 2) + "\n"); await w.close();
+  }
+  async function mutateFile(fn) {            // re-read first so Claude's edits made meanwhile are not overwritten
+    const { doc, list } = await readFile();
+    fn(list); doc.listings = list; await writeFile(doc);
+    return list;
+  }
+  function idb(mode, fn) {
+    return new Promise((resolve) => {
+      try {
+        const rq = indexedDB.open("depa-board", 1);
+        rq.onupgradeneeded = () => rq.result.createObjectStore("h");
+        rq.onerror = () => resolve(null);
+        rq.onsuccess = () => { try { const tx = rq.result.transaction("h", mode), r = fn(tx.objectStore("h")); tx.oncomplete = () => resolve(r && r.result !== undefined ? r.result : null); tx.onerror = () => resolve(null); } catch (e) { resolve(null); } };
+      } catch (e) { resolve(null); }
+    });
+  }
+  async function adopt(handle) {
+    fileHandle = handle;
+    const { list } = await readFile();
+    items = list.map(withDefaults);
+    setMode(T.modeFolder); $("connectBtn").hidden = true; render();
+  }
+  async function connect() {
+    try {
+      const dir = await window.showDirectoryPicker({ mode: "readwrite" });
+      await adopt(await dir.getFileHandle("listings.json"));
+      notice(""); idb("readwrite", (s) => s.put(fileHandle, "listings"));
+    } catch (e) { if (!e || e.name !== "AbortError") notice(T.connectFail); }
+  }
+  async function tryRestore() {
+    const h = await idb("readonly", (s) => s.get("listings"));
+    if (!h || !h.queryPermission) return;
+    try {
+      if ((await h.queryPermission({ mode: "readwrite" })) === "granted") await adopt(h);
+      else { $("connectBtn").textContent = T.reconnect; $("connectBtn").onclick = async () => { try { if ((await h.requestPermission({ mode: "readwrite" })) === "granted") { await adopt(h); } } catch (e) { notice(T.connectFail); } }; }
+    } catch (e) {}
+  }
+
+  // ---- platform ----
+  platform.update = async (id, patch) => {
+    const full = Object.assign({}, patch, { updatedAt: new Date().toISOString() });
+    const x = items.find((i) => String(i.id) === String(id));
+    if (!x) return;
+    if (fileHandle) {
+      try { items = (await mutateFile((list) => { const t = list.find((i) => String(i.id) === String(id)); if (t) Object.assign(t, full); })).map(withDefaults); notice(""); }
+      catch (e) { notice(T.folderFail); throw e; }
+    } else {
+      Object.assign(x, full);
+      const a = state.added.find((i) => i.id === x.id);
+      if (a) Object.assign(a, full); else state.over[x.id] = Object.assign(state.over[x.id] || {}, full);
+      writeState();
+    }
     render();
-  } catch (err) { alert("Invalid JSON file"); }
-  e.target.value = "";
-});
-render();
+  };
+  platform.create = async (doc) => {
+    const full = Object.assign({}, doc, { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+    if (fileHandle) {
+      try { items = (await mutateFile((list) => { list.push(full); })).map(withDefaults); notice(""); }
+      catch (e) { notice(T.folderFail); throw e; }
+    } else { state.added.push(full); items.push(withDefaults(full)); writeState(); }
+    render();
+  };
+
+  // ---- export / import ----
+  function exportJson() {
+    try {
+      const blob = new Blob([JSON.stringify({ listings: items }, null, 2)], { type: "application/json" });
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "board-export.json"; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    } catch (e) { notice(T.saveFail); }
+  }
+  async function importText(text) {
+    let list;
+    try { const d = JSON.parse(text); list = Array.isArray(d) ? d : d.listings; if (!Array.isArray(list)) throw new Error("x"); } catch (e) { notice(T.badFile); return; }
+    let n = 0;
+    for (const r of list) {
+      if (!r || r.id == null) continue;
+      const x = items.find((i) => String(i.id) === String(r.id));
+      if (x) {
+        const patch = {};
+        if (STAGES.includes(r.stage) && r.stage !== x.stage) patch.stage = r.stage;
+        if (typeof r.notes === "string" && r.notes !== x.notes) patch.notes = r.notes;
+        if (Object.keys(patch).length) { await platform.update(x.id, patch); n++; }
+      } else { await platform.create(withDefaults(r)); n++; }
+    }
+    notice(T.imported + ": " + n + " " + T.changes);
+  }
+
+  readState();
+  items = fromData();
+  initUi();
+  $("connectBtn").textContent = T.connect; $("exportBtn").textContent = T.exportJson; $("importBtn").textContent = T.importJson;
+  const fsa = typeof window !== "undefined" && typeof window.showDirectoryPicker === "function";
+  $("connectBtn").hidden = !fsa;
+  $("connectBtn").onclick = connect;
+  $("exportBtn").addEventListener("click", exportJson);
+  $("importBtn").addEventListener("click", () => $("importFile").click());
+  $("importFile").addEventListener("change", async (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; await importText(await f.text()); e.target.value = ""; });
+  setMode(T.modeLocal);
+  notice(T.localHint);
+  if (fsa) tryRestore();
+})();
+
+})();
 </script>
 </body>
 </html>

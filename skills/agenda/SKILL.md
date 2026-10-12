@@ -10,7 +10,8 @@ Before anything else, read `${CLAUDE_PLUGIN_ROOT}/shared/ground-rules.md`
 
 ## 1. Inputs
 Read `criteria.yaml` (`visit_trip`, kids, commute mode), `listings.json` and
-`contacts.md`. Candidates: listings in `visit_scheduled`, `contacted`, `to_review` or
+`contacts.md`. In artifact mode (`board-url.txt` exists) refresh `listings.json` from the
+artifact database first so the stages and notes on the board are current. Candidates: listings in `visit_scheduled`, `contacted`, `to_review` or
 `suggested` that the user wants to see. Ask which, in one message, if unclear.
 If trip dates or free hours are missing, ask (also the arrival time on the first
 day and the departure time on the last; those days have fewer free hours). Blocked times (lunch, a child's
@@ -56,3 +57,7 @@ Tell the user the map needs an internet connection.
 ## 5. After
 Offer to draft confirmation messages for `asked` visits via `/depa:mensajes`, and
 to update listing stages to `visit_scheduled` for confirmed ones.
+
+In artifact mode, when a visit is confirmed or done, move the listing to `visit_scheduled` /
+`visited` in the artifact database and append a dated note with the slot (ground rules
+"Board modes"), then refresh the mirror.

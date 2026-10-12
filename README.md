@@ -16,11 +16,25 @@ in **English and Spanish**.
 |---|---|
 | `/depa:setup` | Interviews you (city, budget including maintenance fees, bedrooms, pets, kids, furnished or not, neighborhoods, dates, guarantee options) and builds your private hunt folder. Start here. |
 | `/depa:buscar` | Finds new listings: web search and, with Chrome connected, your own browser reading portals page by page like a person, newest first. Filters by your criteria, skips reposts, flags likely scams, estimates the commute and gives each place a nickname. |
-| `/depa:tablero` | Builds `board.html`, a local kanban board: suggested, to review, contacted, visit scheduled, visited, finalist, last resort, discarded. Search, sort, export/import. |
+| `/depa:tablero` | Your kanban board: suggested, to review, contacted, visit scheduled, visited, finalist, last resort, discarded. Default: a private **claude.ai Artifact with a shared database** you and your partner both edit and Claude reads. Fallback: a local `board.html`. See [Board modes](#board-modes). |
 | `/depa:mensajes` | Drafts WhatsApp or email messages to agents with the questions you still need answered. **It only drafts; you press send.** |
 | `/depa:agenda` | Plans your visit trip: grouped by area, realistic travel times, buffers, blocked times (lunch, nap), confirmation status, optional map. |
 | `/depa:requisitos` | Plain-language guide to guarantor vs legal policy vs extra deposit, documents, contract red flags, pet deposits, a visit inspection checklist and "don't pay or sign yet" advice. |
 | `/depa:seguimiento` | Who hasn't answered in a few days, plus a polite reminder draft for each. |
+
+## Board modes
+`/depa:tablero` picks the mode for you.
+
+- **Shared board (default, when Claude Code has the `Artifact` tool):** it publishes the board as a private
+  page on claude.ai that stores every listing in a shared database. Drag cards between stages, edit notes,
+  discard: it saves for everyone with access, and Claude reads and writes the same rows (`/depa:buscar`
+  adds new finds as *Suggested*; `/depa:mensajes`, `/depa:agenda` and `/depa:seguimiento` read your stages and
+  notes and append dated notes). To share it, open it on claude.ai, use Share and invite your partner by
+  email as **Editor** (or Contributor if offered). `listings.json` stays as a local copy refreshed on every run;
+  the link is saved in `board-url.txt` so the same board is reused.
+- **Local `board.html` (fallback):** in Chrome or Edge click **Connect folder** and the board reads and writes
+  `listings.json` directly. Anywhere else it keeps your changes in the browser and offers **Export JSON /
+  Import JSON** so Claude can ingest them.
 
 ## What you need
 - A paid Claude plan that includes Claude Code (Pro, Max, Team or Enterprise).
@@ -49,7 +63,8 @@ Then type:
 
 ## Your data stays yours
 - Your criteria, budget, listings, contacts and agenda are saved **only in the folder
-  you chose, on your computer**. Nothing is uploaded to this project.
+  you chose, on your computer**. Nothing is uploaded to this project. In shared-board mode the
+  listings are also stored in your private claude.ai Artifact, visible only to people you share it with.
 - Like anything you do in Claude Code, your conversation is processed by Claude.
   See Anthropic's privacy policy if you have questions about that.
 - Web searches send search terms (city, neighborhood, bedrooms), never your name,
@@ -102,11 +117,25 @@ en **español e inglés**.
 |---|---|
 | `/depa:setup` | Te entrevista (ciudad, presupuesto con mantenimiento incluido, recámaras, mascotas, hijos, amueblado o no, colonias, fechas, tipo de garantía) y arma tu carpeta privada. Empieza aquí. |
 | `/depa:buscar` | Busca anuncios nuevos: búsqueda web y, con Chrome conectado, tu propio navegador leyendo portales página por página como lo harías tú, de lo más nuevo a lo más viejo. Filtra por tus criterios, descarta repetidos, avisa de posibles fraudes, estima el trayecto y le pone un apodo a cada depa. |
-| `/depa:tablero` | Crea `board.html`, un tablero kanban local: sugeridos, por revisar, contactados, visita agendada, visitados, finalistas, "peor es abajo de un puente" y descartados. Búsqueda, orden, exportar/importar. |
+| `/depa:tablero` | Tu tablero kanban: sugeridos, por revisar, contactados, visita agendada, visitados, finalistas, "peor es abajo de un puente" y descartados. Por defecto: un **Artifact privado de claude.ai con base de datos compartida** que tú y tu pareja editan y Claude lee. Alternativa: un `board.html` local. Ver [Modos del tablero](#modos-del-tablero). |
 | `/depa:mensajes` | Redacta mensajes de WhatsApp o correo para los agentes con las preguntas que te faltan. **Solo redacta; tú das enviar.** |
 | `/depa:agenda` | Planea tu viaje de visitas: agrupadas por zona, tiempos de traslado realistas, colchones de tiempo, bloques (comida, siesta), estatus de confirmación y mapa opcional. |
 | `/depa:requisitos` | Guía en lenguaje claro: aval vs póliza jurídica vs depósito extra, documentos, banderas rojas del contrato, depósito por mascota, lista para revisar el depa en la visita y "no pagues ni firmes todavía". |
 | `/depa:seguimiento` | Quién no ha contestado en unos días y un recordatorio amable para cada uno. |
+
+## Modos del tablero
+`/depa:tablero` elige el modo por ti.
+
+- **Tablero compartido (por defecto, cuando Claude Code tiene la herramienta `Artifact`):** publica el tablero como
+  una página privada en claude.ai que guarda cada anuncio en una base de datos compartida. Arrastra tarjetas entre
+  etapas, edita notas, descarta: se guarda para todos los que tengan acceso y Claude lee y escribe las mismas filas
+  (`/depa:buscar` agrega lo nuevo como *Sugeridos*; `/depa:mensajes`, `/depa:agenda` y `/depa:seguimiento` leen tus
+  etapas y notas y agregan notas con fecha). Para compartirlo, ábrelo en claude.ai, usa Compartir e invita a tu
+  pareja por correo como **Editor** (o Colaborador si aparece). `listings.json` queda como copia local que se
+  refresca en cada corrida; el enlace se guarda en `board-url.txt` para reutilizar el mismo tablero.
+- **`board.html` local (alternativa):** en Chrome o Edge da clic en **Conectar carpeta** y el tablero lee y escribe
+  `listings.json` directamente. En otros navegadores guarda tus cambios en el navegador y ofrece **Exportar /
+  Importar JSON** para que Claude los incorpore.
 
 ## Qué necesitas
 - Un plan de pago de Claude que incluya Claude Code (Pro, Max, Team o Enterprise).
@@ -135,7 +164,8 @@ Luego escribe:
 
 ## Tus datos son tuyos
 - Tus criterios, presupuesto, anuncios, contactos y agenda se guardan **solo en la
-  carpeta que elegiste, en tu computadora**. Nada se sube a este proyecto.
+  carpeta que elegiste, en tu computadora**. Nada se sube a este proyecto. Con el tablero
+  compartido, los anuncios también viven en tu Artifact privado de claude.ai, visible solo para quien tú invites.
 - Como todo lo que haces en Claude Code, tu conversación la procesa Claude.
   Revisa la política de privacidad de Anthropic si tienes dudas.
 - Las búsquedas web envían términos de búsqueda (ciudad, colonia, recámaras), nunca

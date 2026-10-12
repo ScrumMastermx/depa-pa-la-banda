@@ -78,7 +78,9 @@ criteria.yaml   what they need: city, budget, bedrooms, pets, dates...
 listings.json   every listing found, one object each, with its stage
 contacts.md     every message drafted/sent and every reply, by date
 agenda.md       the visit itinerary
-board.html      the kanban board (generated from listings.json)
+board-url.txt   (artifact mode) the URL of the shared board, one line
+board-artifact.html  (artifact mode) the page that was published
+board.html      (local mode) the kanban board (generated from listings.json)
 ```
 
 If `criteria.yaml` is missing, stop and tell the user to run `/depa:setup` first.
@@ -95,7 +97,8 @@ If `criteria.yaml` is missing, stop and tell the user to run `/depa:setup` first
   "distance_km": "?", "travel_min": "?",
   "stage": "suggested", "scam_flags": [], "notes": "",
   "found_on": "YYYY-MM-DD", "posted_on": "?",
-  "lat": null, "lng": null
+  "lat": null, "lng": null,
+  "createdAt": "ISO timestamp", "updatedAt": "ISO timestamp", "updatedBy": "claude | viewer id"
 } ] }
 ```
 `lat`/`lng` are optional (numbers, only from the listing or a place the user confirmed;
@@ -105,3 +108,25 @@ portal results page, write `?` and put the results page in `notes`.
 `total` = price + maintenance, only when both are known; otherwise `"?"`.
 Stages (exact ids): `suggested`, `to_review`, `contacted`, `visit_scheduled`,
 `visited`, `finalist`, `last_resort`, `discarded`.
+
+## Board modes: artifact (default) or local
+`/depa:tablero` chooses once and records it. If the `Artifact` tool is available
+and `board-url.txt` exists, the hunt is in **artifact mode**: the shared claude.ai
+Artifact database (collection `depas`) is the source of truth for `stage` and
+`notes`, and `listings.json` is a local mirror refreshed on every run. Otherwise
+it is **local mode** and `listings.json` is the source of truth.
+
+- One document per listing, id = the listing `id`, fields exactly as in the
+  listings.json shape above (`createdAt`, `updatedAt`, `updatedBy` are optional in
+  the file and always set in the database).
+- Read and write documents with the `ArtifactData` tool (`get`, `list`, `query`,
+  `update`, `batch`; `batch` takes at most 50 writes). Pin every write to an
+  existing document with `if_version`; when many documents are needed, `list`
+  with `out_dir` and read the saved files.
+- When Claude changes a document it sets `updatedAt` (ISO time) and
+  `updatedBy: "claude"`. New notes are appended as a new line starting with
+  today's date (`YYYY-MM-DD: text`); never overwrite what the users wrote.
+- Never create a second artifact: if `board-url.txt` exists, update that URL.
+- Never delete documents; a discarded listing stays so it is never suggested again.
+- Before a skill relies on stages or notes in artifact mode, it first refreshes the
+  mirror (`list` the collection, rewrite `listings.json`), and says so in one line.

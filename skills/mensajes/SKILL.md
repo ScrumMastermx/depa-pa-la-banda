@@ -10,6 +10,8 @@ Before anything else, read `${CLAUDE_PLUGIN_ROOT}/shared/ground-rules.md`
 Also read `${CLAUDE_PLUGIN_ROOT}/shared/chrome.md`. **You never press Send.**
 
 ## 1. Pick the listings
+In artifact mode (`board-url.txt` exists) first refresh `listings.json` from the artifact
+database (ground rules "Board modes"), so stages and notes set on the board count.
 Use the listings the user names, else all in stage `to_review`; if there are none,
 offer the `suggested` ones and ask which. Read `criteria.yaml`,
 `listings.json` and `contacts.md` (skip anyone already messaged unless asked;
@@ -65,4 +67,6 @@ Append to `contacts.md`: date (today), listing nickname, contact name, phone,
 channel, "asked: pets, maintenance, ...", status `drafted`. When the user later
 says they sent it, set `sent` + date; when they paste a reply, set `answered`,
 copy the facts into `listings.json` (replace `?`; mark source "agent reply
-YYYY-MM-DD") and move the listing to `contacted`.
+YYYY-MM-DD") and move the listing to `contacted`. In artifact mode make that stage change and a
+dated note (`YYYY-MM-DD: agent replied: ...`) in the artifact database with `ArtifactData`
+`update` (ground rules), then refresh the mirror.

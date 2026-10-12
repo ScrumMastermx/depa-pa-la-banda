@@ -1,7 +1,7 @@
 {
   "name": "depa",
   "description": "Apartment-hunt kit for Claude Code: set your criteria, find and vet listings, track them on a board, draft messages to agents, plan visits and learn what to ask before you sign. Any city. English + Spanish.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "Depa pa la Banda contributors"
   },

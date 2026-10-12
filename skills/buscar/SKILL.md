@@ -11,7 +11,9 @@ Also read `${CLAUDE_PLUGIN_ROOT}/shared/chrome.md`. Its limits are absolute:
 **no scrapers, no bypassing bot protection, stop at any challenge.**
 
 ## 1. Load context
-Read `criteria.yaml` (missing → `/depa:setup`) and `listings.json`. Tell the user
+Read `criteria.yaml` (missing → `/depa:setup`) and `listings.json`. If `board-url.txt`
+exists (artifact mode, see ground rules "Board modes"), first refresh `listings.json` from the
+artifact database so dedupe sees every stage, discarded included. Tell the user
 in one line what you will search for (city, budget, bedrooms, key constraints)
 and that it takes a few minutes. If they gave a portal, start there.
 
@@ -82,8 +84,13 @@ read in maps). If you can't estimate, write `?`. Drop listings clearly over
   the listing; unique within `listings.json`.
 - Append to `listings.json` (shape in ground rules) with `stage: "suggested"`,
   `found_on` today, and `?` for every unknown. Keep the source URL.
+- Artifact mode (`board-url.txt` exists): also upload each new listing to the board as a
+  document in collection `depas` (`ArtifactData` `batch`, `set`, at most 50 per batch,
+  `doc_id` = the listing id, plus `createdAt`, `updatedAt`, `updatedBy: "claude"`). Repost
+  price changes go into that document's `notes` as a dated line. The partner sees them
+  in the "Suggested" column right away.
 - Report: how many new, how many dropped (with reasons), then the new ones as a
   short list: nickname · neighborhood · rent + maintenance · bedrooms · approx.
   commute · flags. Include agent phone if the listing shows one.
-- Finish with: "Run `/depa:tablero` to see them on your board, or tell me which
+- Finish with: "Open your board (or run `/depa:tablero`) to see them, or tell me which
   ones to move to *to review* or *discarded*."

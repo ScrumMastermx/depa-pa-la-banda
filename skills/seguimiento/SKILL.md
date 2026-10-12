@@ -10,7 +10,8 @@ Before anything else, read `${CLAUDE_PLUGIN_ROOT}/shared/ground-rules.md`
 Also read `${CLAUDE_PLUGIN_ROOT}/shared/chrome.md` if you will paste into a chat. **You never press Send.**
 
 ## 1. Who is waiting
-Read `contacts.md` and `listings.json`. A contact is pending when its status is
+Read `contacts.md` and `listings.json` (in artifact mode, `board-url.txt` exists, refresh
+`listings.json` from the artifact database first: ground rules "Board modes"). A contact is pending when its status is
 `sent` and there is no `answered` entry for that listing, and N days have
 passed since the send date (N = what the user says; default 2; use today's date
 per ground rules). Ignore listings in `discarded`. Also surface visits in
@@ -31,3 +32,5 @@ trying another contact at the same agency.
 ## 4. Log
 Append to `contacts.md` a `reminder drafted` row with today's date. When the
 user says it was sent, update the status to `reminded` + date.
+In artifact mode also append a dated note ("YYYY-MM-DD: reminder drafted") to the listing's
+notes in the database; after two unanswered reminders offer to move it to `discarded` there.
