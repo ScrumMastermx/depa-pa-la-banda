@@ -1,0 +1,13 @@
+# Never commit your personal hunt data. If you run Depa inside a clone of
+# this repo by mistake, these keep your files out of git.
+criteria.yaml
+listings.json
+contacts.md
+agenda.md
+board.html
+map.html
+/CLAUDE.md
+*.pdf
+*.docx
+.DS_Store
+tests/out/

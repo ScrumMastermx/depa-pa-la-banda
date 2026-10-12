@@ -1,0 +1,29 @@
+language: en
+created: 2026-01-15
+city: "Sampleville"
+country: "Exampleland"
+reference_point:
+  label: "office"
+  address: "1 Example Street (fictional)"
+max_commute_min: 40
+commute_mode: transit
+budget:
+  currency: "MXN"
+  max_total_monthly: 30000
+  includes_utilities: false
+bedrooms_min: 2
+parking: { needed: true, spots: 1 }
+pets:
+  - { type: dog, size: small, count: 1 }
+kids:
+  - { age: 3 }
+furnished: unfurnished_if_cheap
+required_appliances: [fridge, stove, washer]
+neighborhoods:
+  accepted: [Northgate, Old Mill]
+  excluded:
+    - { name: Dockside, reason: "noisy at night" }
+move_in: "2026-03-01"
+visit_trip: { arrive: "2026-02-10", depart: "2026-02-14", free_hours: "09:00-18:00", blocked: ["13:00-15:00 nap"] }
+guarantee_options: [legal_policy, extra_deposit]
+notes: "Fictional sample."

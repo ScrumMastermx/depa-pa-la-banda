@@ -1,0 +1,20 @@
+{
+  "name": "depa-pa-la-banda",
+  "owner": {
+    "name": "Depa pa la Banda contributors",
+    "url": "https://github.com/OWNER"
+  },
+  "metadata": {
+    "description": "Apartment-hunt kit for Claude Code: criteria, listing search, kanban board, messages, visit agenda, rental requirements. English + Spanish.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "depa",
+      "source": "./",
+      "description": "Find and vet rental listings, track them on a board, draft messages to agents, plan your visit trip and learn what to check before signing. Never sends, pays or signs for you. English + Spanish.",
+      "category": "productivity",
+      "tags": ["apartment", "rental", "housing", "relocation", "spanish"]
+    }
+  ]
+}
