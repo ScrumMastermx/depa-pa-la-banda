@@ -94,9 +94,14 @@ If `criteria.yaml` is missing, stop and tell the user to run `/depa:setup` first
   "photo_url": "?", "agency": "?", "contact_name": "?", "contact_phone": "?",
   "distance_km": "?", "travel_min": "?",
   "stage": "suggested", "scam_flags": [], "notes": "",
-  "found_on": "YYYY-MM-DD", "posted_on": "?"
+  "found_on": "YYYY-MM-DD", "posted_on": "?",
+  "lat": null, "lng": null
 } ] }
 ```
+`lat`/`lng` are optional (numbers, only from the listing or a place the user confirmed;
+`/depa:agenda` map uses them). `url` is the listing's OWN page; if you only know a
+portal results page, write `?` and put the results page in `notes`.
+`contacts.md` statuses: `drafted`, `sent`, `answered`, `reminded`.
 `total` = price + maintenance, only when both are known; otherwise `"?"`.
 Stages (exact ids): `suggested`, `to_review`, `contacted`, `visit_scheduled`,
 `visited`, `finalist`, `last_resort`, `discarded`.

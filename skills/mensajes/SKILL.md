@@ -10,7 +10,8 @@ Before anything else, read `${CLAUDE_PLUGIN_ROOT}/shared/ground-rules.md`
 Also read `${CLAUDE_PLUGIN_ROOT}/shared/chrome.md`. **You never press Send.**
 
 ## 1. Pick the listings
-Use the listings the user names, or all in stage `to_review`. Read `criteria.yaml`,
+Use the listings the user names, else all in stage `to_review`; if there are none,
+offer the `suggested` ones and ask which. Read `criteria.yaml`,
 `listings.json` and `contacts.md` (skip anyone already messaged unless asked;
 that is `/depa:seguimiento`).
 
@@ -42,10 +43,14 @@ Never ask for or offer money, ID or financial data in the first message
   > Hola, buenas tardes. Vi el depa de 2 recámaras en <colonia> (<link>). ¿Sigue disponible?
   > Tengo unas preguntas:
   > 1. ¿El mantenimiento está incluido en la renta? ¿De cuánto es?
-  > 2. ¿Aceptan un perro pequeño?
+  > 2. ¿Aceptan <mascota: p. ej. un gato / un perro pequeño>?
   > 3. ¿Qué incluye el amueblado (lavadora, refrigerador, estufa)?
   > 4. ¿Qué requisitos piden para el contrato (aval, póliza jurídica, depósito)?
   > ¿Podría verlo el <día> a las <hora>? Gracias.
+
+If the listing shows no contact name or phone (common: the portal hides it
+behind its own chat/form), draft the text for the portal's message box, write
+`phone: ?` and tell the user to open the listing link and paste it there.
 
 ## 4. Deliver
 - Show each draft with the contact name AND phone (ground rule 6) and say

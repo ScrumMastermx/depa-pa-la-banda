@@ -11,8 +11,8 @@ Before anything else, read `${CLAUDE_PLUGIN_ROOT}/shared/ground-rules.md`
 ## Goal
 Leave the user with a working folder in the current directory:
 `criteria.yaml`, `listings.json` (empty), `contacts.md`, `agenda.md`, and a
-short `CLAUDE.md` that says "this is a Depa hunt folder; use /depa:* skills and
-follow the ground rules". Then tell them what to do next.
+short `CLAUDE.md` with exactly: "This is a Depa hunt folder. Use the /depa:* skills and
+follow the plugin's ground rules. Never send, submit, pay or sign anything for me." Then tell them what to do next.
 
 The user may not be technical. Ask one thing at a time, in plain words. Never
 show a wall of questions; group them in 3-4 short rounds.
@@ -41,7 +41,7 @@ Round 1, where and how much:
 
 Round 2, who is moving in:
 - Parking: needed yes/no, how many cars.
-- Pets: type, size, how many ("one small dog"). Many buildings refuse or charge extra.
+- Pets: type, size, how many ("one small dog", "one cat"; size can be empty). Many buildings refuse or charge extra.
 - Kids: how many and ages (affects floors, safety, schools, nap times for visits).
 - Furnished: `yes` / `semi` (appliances only) / `either` / `unfurnished_if_cheap`.
   For the last one, ask: "unfurnished is ok only if it is cheaper AND it comes with
@@ -49,7 +49,8 @@ Round 2, who is moving in:
   `required_appliances`.
 
 Round 3, where:
-- Neighborhoods they like (`accepted`), and ones to avoid (`excluded`) with a
+- Neighborhoods they like (write each with its municipality when the metro area has
+  independent ones, e.g. "Del Valle (San Pedro Garza García)") (`accepted`), and ones to avoid (`excluded`) with a
   one-line reason each if they have it. It's fine to be empty: offer to research
   neighborhoods later.
 - Acceptable commute to the reference point (max minutes, and by what: walk,

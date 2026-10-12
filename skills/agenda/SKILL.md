@@ -10,9 +10,10 @@ Before anything else, read `${CLAUDE_PLUGIN_ROOT}/shared/ground-rules.md`
 
 ## 1. Inputs
 Read `criteria.yaml` (`visit_trip`, kids, commute mode), `listings.json` and
-`contacts.md`. Candidates: listings in `visit_scheduled`, `contacted` or
-`to_review` that the user wants to see. Ask which, in one message, if unclear.
-If trip dates or free hours are missing, ask. Blocked times (lunch, a child's
+`contacts.md`. Candidates: listings in `visit_scheduled`, `contacted`, `to_review` or
+`suggested` that the user wants to see. Ask which, in one message, if unclear.
+If trip dates or free hours are missing, ask (also the arrival time on the first
+day and the departure time on the last; those days have fewer free hours). Blocked times (lunch, a child's
 nap, a meeting) go in as fixed blocks; ask for them if `blocked` is empty and the
 user has kids.
 
@@ -41,7 +42,8 @@ today" list and a "Backup if someone cancels" list. Translate headings to the
 user's language.
 
 ## 4. Optional map
-Offer a map. If yes, write `map.html`: a single file using Leaflet from a CDN
+Offer a map only if at least one listing (or the reference point) has coordinates;
+otherwise say the map would be empty and skip it. If yes, write `map.html`: a single file using Leaflet from a CDN
 (`https://unpkg.com/leaflet@1.9.4/dist/leaflet.js` and its CSS) and
 OpenStreetMap tiles with the required attribution ("© OpenStreetMap
 contributors"). One marker per visit with nickname, time and address, numbered by

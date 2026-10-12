@@ -28,6 +28,12 @@ and that it takes a few minutes. If they gave a portal, start there.
 - If a site shows a CAPTCHA, login wall, "unusual traffic" or any challenge:
   stop on that site, tell the user (site name + what you saw) and move on. Never
   attempt to solve or bypass it.
+- A portal that answers WebFetch with 403/blocked is showing bot protection: do
+  not retry it or look for a workaround. Use only what the search results
+  themselves say, tell the user which portal blocked you, and give them the link to open.
+  A search summary lists several listings in prose; attach a URL to a listing only
+  when the result title/URL clearly names that same property. Never pair them by
+  guess. If unsure, set `url: "?"` (ground rules) and mark photo/contact `?`.
 - Without Chrome: WebSearch/WebFetch only. Many portals load by JavaScript and
   won't read; say which ones and give the user the link to open themselves.
 
@@ -40,6 +46,9 @@ needed, furnished status incompatible with `furnished` (for
 `unfurnished_if_cheap`: allow unfurnished only if it lists the required
 appliances AND is cheaper than the furnished median you have seen). Unknown
 (`?`) is not a violation: keep and ask later via `/depa:mensajes`.
+If almost nothing in the accepted neighborhoods fits the budget, say so plainly
+(e.g. "the typical 2-bedroom here is above your budget") and suggest which
+criterion to relax, instead of padding the list. Never keep a listing over budget.
 Report the count dropped and the top reason, e.g. "Dropped 14: 9 over budget, 3 excluded area, 2 no pets."
 
 ## 4. Dedupe

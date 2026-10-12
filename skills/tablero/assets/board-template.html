@@ -75,7 +75,7 @@ function card(x) {
 }
 function render() {
   const q = norm($("q").value), key = $("sort").value;
-  const shown = items.filter(x => !q || norm(JSON.stringify(x)).includes(q)).sort((a, b) => cmp(a, b, key));
+  const shown = items.filter(x => !q || norm(Object.values(x).map(v => Array.isArray(v) ? v.join(" ") : v).join(" ")).includes(q)).sort((a, b) => cmp(a, b, key));
   $("count").textContent = `${shown.length}/${items.length}`;
   $("board").innerHTML = STAGES.map(s => {
     const list = shown.filter(x => x.stage === s);
