@@ -37,7 +37,7 @@ Create an empty folder (for example `Documents/Depa`), open it in Claude Code an
 type these two lines in the chat box, one at a time:
 
 ```
-/plugin marketplace add OWNER/depa-pa-la-banda
+/plugin marketplace add ScrumMastermx/depa-pa-la-banda
 /plugin install depa@depa-pa-la-banda
 ```
 
@@ -123,7 +123,7 @@ Crea una carpeta vacía (por ejemplo `Documentos/Depa`), ábrela en Claude Code 
 escribe estas dos líneas en el chat, una por una:
 
 ```
-/plugin marketplace add OWNER/depa-pa-la-banda
+/plugin marketplace add ScrumMastermx/depa-pa-la-banda
 /plugin install depa@depa-pa-la-banda
 ```
 

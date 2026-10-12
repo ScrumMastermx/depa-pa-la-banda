@@ -28,7 +28,7 @@ tus contactos, tu agenda) va ahí, y solo ahí.
 Escribe esta línea en el chat y presiona Enter:
 
 ```
-/plugin marketplace add OWNER/depa-pa-la-banda
+/plugin marketplace add ScrumMastermx/depa-pa-la-banda
 ```
 
 Luego esta:
